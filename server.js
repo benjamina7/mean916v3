@@ -23,6 +23,9 @@ var Todo = mongoose.model('Todo', {
     text: String
 });
 
+// sets port 8080 to default or unless otherwise specified in the environment
+app.set('port', process.env.PORT || 8080);
+
 // routes ==================
 
     // api ----------------------------------
@@ -85,7 +88,6 @@ var Todo = mongoose.model('Todo', {
         res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
 
-// listen (start app with node server.js) ======================================
-app.listen(3005);
-console.log("App listening on port 3005");
-
+var _PORT = app.get('port');
+app.listen(_PORT);
+console.log("App listening on port " + _PORT);

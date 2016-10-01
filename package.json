@@ -12,6 +12,14 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "~4.5"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "monitor": "nodemon server.js",
+    "deploy": "gcloud app deploy"
+  },
   "dependencies": {
     "body-parser": "^1.4.3",
     "express": "^4.13.4",
