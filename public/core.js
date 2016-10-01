@@ -15,13 +15,7 @@ function mainController($scope, $http) {
             console.log('Error: ' + data);
         });
 
-    // $scope.todos = [{
-    //                     "_id": {
-    //                         "$oid": "57eded6090f72323641698fb"
-    //                     },
-    //                     "text": "z great test 001",
-    //                     "__v": 0
-    //                 }];
+    //$scope.todos = [{"_id": {"$oid": "57eded6090f72323641698fb"},"text": "z great test 001","__v": 0}];
 
     // when submitting the add form, send the text to the node api
     $scope.createTodo = function() {

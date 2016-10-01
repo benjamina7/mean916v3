@@ -3,6 +3,7 @@
 // setup ===================
 var express = require('express');
 var app = express();
+var cfenv = require("cfenv");
 var mongoose = require('mongoose');
 var morgan = require('morgan');                     // log requests to the console (express4)
 var bodyParser = require('body-parser');            // pull information from HTML POST (express4)
@@ -10,19 +11,24 @@ var methodOverride = require('method-override');    // simulate DELETE and PUT (
 
 // configuration =====================
 
+// force the port
+var _PORT = 8080;
+if (process == undefined)
+    process = new process();
+if (process.env == undefined)
+    process.env = {};
+process.env.PORT = _PORT;
+app.set('port', _PORT);
+
 // pull environment variables from cf user defined service
-var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
-//console.log('vcap_services: ' + vcap_services);
+var appEnv = cfenv.getAppEnv();
+//console.log(JSON.stringify(appEnv));
 
-// assign mongodb credentials from cf env vars
-var _MONGO_USER = vcap_services["user-provided"]["0"].credentials.username;
-//console.log('_MONGO_USER: ' + _MONGO_USER);
-var _MONGO_PW = vcap_services["user-provided"]["0"].credentials.password;
-//console.log('_MONGO_PW: ' + _MONGO_PW);
-var _MONGO_URL = vcap_services["user-provided"]["0"].credentials.url;
-//console.log('_MONGO_URL: ' + _MONGO_URL);
+var mongoCredentials = appEnv.getServiceCreds('mongolab1');
+//console.log('getServiceCreds: ' + JSON.stringify(mongoCredentials));
 
-mongoose.connect('mongodb://' + _MONGO_USER + ':' + _MONGO_PW + '@' + _MONGO_URL);
+
+mongoose.connect('mongodb://' + mongoCredentials.username + ':' + mongoCredentials.password + '@' + mongoCredentials.url);
 
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
@@ -35,9 +41,6 @@ app.use(methodOverride());
 var Todo = mongoose.model('Todo', {
     text: String
 });
-
-// sets port 8080 to default or unless otherwise specified in the environment
-app.set('port', process.env.PORT || 8080);
 
 // routes ==================
 
@@ -101,6 +104,6 @@ app.set('port', process.env.PORT || 8080);
         res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
 
-var _PORT = app.get('port');
-app.listen(_PORT);
-console.log("App listening on port " + _PORT);
+app.listen(appEnv.port, appEnv.bind, function() {
+    console.log("server starting on " + appEnv.url);
+});
