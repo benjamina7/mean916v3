@@ -15,8 +15,17 @@ function mainController($scope, $http) {
             console.log('Error: ' + data);
         });
 
+    // $scope.todos = [{
+    //                     "_id": {
+    //                         "$oid": "57eded6090f72323641698fb"
+    //                     },
+    //                     "text": "z great test 001",
+    //                     "__v": 0
+    //                 }];
+
     // when submitting the add form, send the text to the node api
     $scope.createTodo = function() {
+        console.log('createTodo()');
         $http.post('/api/todos', $scope.formData)
             .success(function(data) {
                 $scope.formData = {}; // clear the form so our user is ready to enter another
@@ -30,6 +39,7 @@ function mainController($scope, $http) {
 
     // delete a todo after checking it
     $scope.deleteTodo = function(id) { 
+        console.log('deleteTodo()');
         if (id == undefined)
             return;
             

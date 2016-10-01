@@ -17,8 +17,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "monitor": "nodemon server.js",
-    "deploy": "gcloud app deploy"
+    "monitor": "nodemon server.js"
   },
   "dependencies": {
     "body-parser": "^1.4.3",

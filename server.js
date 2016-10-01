@@ -9,7 +9,20 @@ var bodyParser = require('body-parser');            // pull information from HTM
 var methodOverride = require('method-override');    // simulate DELETE and PUT (express4)
 
 // configuration =====================
-mongoose.connect('mongodb://guest1:passw0rd@ds033126.mlab.com:33126/zbtest1');
+
+// pull environment variables from cf user defined service
+var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
+//console.log('vcap_services: ' + vcap_services);
+
+// assign mongodb credentials from cf env vars
+var _MONGO_USER = vcap_services["user-provided"]["0"].credentials.username;
+//console.log('_MONGO_USER: ' + _MONGO_USER);
+var _MONGO_PW = vcap_services["user-provided"]["0"].credentials.password;
+//console.log('_MONGO_PW: ' + _MONGO_PW);
+var _MONGO_URL = vcap_services["user-provided"]["0"].credentials.url;
+//console.log('_MONGO_URL: ' + _MONGO_URL);
+
+mongoose.connect('mongodb://' + _MONGO_USER + ':' + _MONGO_PW + '@' + _MONGO_URL);
 
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
