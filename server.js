@@ -64,7 +64,7 @@ var Todo = mongoose.model('Todo', {
         app.post('/api/todos', function(req, res) {
                 // create a todo
                 Todo.create({
-                    text: req.body.text,
+                    text: req.body.text + ' - poop!',
                     done: false
                 }, function(err, todo) {
                     if (err) {

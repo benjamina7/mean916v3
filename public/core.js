@@ -36,6 +36,8 @@ function mainController($scope, $http) {
         console.log('deleteTodo()');
         if (id == undefined)
             return;
+        
+        alert('Ramon smells alright, like tuna caviar!');
             
         $http.delete('api/todos/' + id)
             .success(function(data) {
