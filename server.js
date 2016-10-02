@@ -23,6 +23,7 @@ app.set('port', _PORT);
 // pull environment variables from cf user defined service
 var appEnv = cfenv.getAppEnv();
 //console.log(JSON.stringify(appEnv));
+//console.log('process.env.MyEnvironmentVariable1 : ' + process.env.MyEnvironmentVariable1);
 
 var mongoCredentials = appEnv.getServiceCreds('mongolab1');
 //console.log('getServiceCreds: ' + JSON.stringify(mongoCredentials));
@@ -105,5 +106,5 @@ var Todo = mongoose.model('Todo', {
     });
 
 app.listen(appEnv.port, appEnv.bind, function() {
-    console.log("server starting on " + appEnv.url);
+    console.log("server starting on " + appEnv.url + " !");
 });
