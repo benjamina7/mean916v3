@@ -12,12 +12,7 @@ var methodOverride = require('method-override');    // simulate DELETE and PUT (
 
 // force the port
 var _PORT = 8080;
-if (process == undefined)
-    process = new process();
-if (process.env == undefined)
-    process.env = {};
-process.env.PORT = _PORT;
-app.set('port', _PORT);
+(require('./config/port')).forcePort(app, _PORT);
 
 // load the cloud foundry config
 var cloudFoundryConfig = require('./config/cloudFoundry');
