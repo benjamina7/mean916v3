@@ -3,7 +3,6 @@
 // setup ===================
 var express = require('express');
 var app = express();
-var cfenv = require("cfenv");
 var mongoose = require('mongoose');
 var morgan = require('morgan');                     // log requests to the console (express4)
 var bodyParser = require('body-parser');            // pull information from HTML POST (express4)
@@ -20,16 +19,18 @@ if (process.env == undefined)
 process.env.PORT = _PORT;
 app.set('port', _PORT);
 
-// pull environment variables from cf user defined service
-var appEnv = cfenv.getAppEnv();
-//console.log(JSON.stringify(appEnv));
-//console.log('process.env.MyEnvironmentVariable1 : ' + process.env.MyEnvironmentVariable1);
+// load the cloud foundry config
+var cloudFoundryConfig = require('./config/cloudFoundry');
+//console.log('cloudFoundryConfig: ' + JSON.stringify(cloudFoundryConfig));
 
-var mongoCredentials = appEnv.getServiceCreds('mongolab1');
-//console.log('getServiceCreds: ' + JSON.stringify(mongoCredentials));
+// load the database config
+var databaseConfig = require('./config/database');
+//console.log('databaseConfig: ' + JSON.stringify(databaseConfig));
 
-
-mongoose.connect('mongodb://' + mongoCredentials.username + ':' + mongoCredentials.password + '@' + mongoCredentials.url);
+mongoose.connect(databaseConfig.url
+                    .replace('{{mongoCredentials.username}}', cloudFoundryConfig.mongoCredentials.username)
+                    .replace('{{mongoCredentials.password}}', cloudFoundryConfig.mongoCredentials.password)
+                    .replace('{{mongoCredentials.url}}', cloudFoundryConfig.mongoCredentials.url));
 
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
@@ -105,6 +106,6 @@ var Todo = mongoose.model('Todo', {
         res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
 
-app.listen(appEnv.port, appEnv.bind, function() {
-    console.log("server starting on " + appEnv.url + " !");
+app.listen(cloudFoundryConfig.appEnv.port, cloudFoundryConfig.appEnv.bind, function() {
+    console.log("server starting on " + cloudFoundryConfig.appEnv.url + " !");
 });
