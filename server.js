@@ -24,13 +24,13 @@ var cloudFoundryConfig = require('./config/cloudFoundry');
 //console.log('cloudFoundryConfig: ' + JSON.stringify(cloudFoundryConfig));
 
 // load the database config
-var databaseConfig = require('./config/database');
+var databaseConfig = require('./config/database')(cloudFoundryConfig.mongoCredentials.username,
+                                                  cloudFoundryConfig.mongoCredentials.password,
+                                                  cloudFoundryConfig.mongoCredentials.url);
 //console.log('databaseConfig: ' + JSON.stringify(databaseConfig));
 
-mongoose.connect(databaseConfig.url
-                    .replace('{{mongoCredentials.username}}', cloudFoundryConfig.mongoCredentials.username)
-                    .replace('{{mongoCredentials.password}}', cloudFoundryConfig.mongoCredentials.password)
-                    .replace('{{mongoCredentials.url}}', cloudFoundryConfig.mongoCredentials.url));
+// connect to db
+mongoose.connect(databaseConfig);
 
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
@@ -39,72 +39,8 @@ app.use(bodyParser.json());                                     // parse applica
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(methodOverride());
 
-// define models =======================
-var Todo = mongoose.model('Todo', {
-    text: String
-});
-
-// routes ==================
-
-    // api ----------------------------------
-
-        // get all todos
-        app.get('/api/todos', function(req, res) {
-            // use mongoose to get all todos in the db
-            Todo.find(function(err, todos) {
-                // if error retreiving datam send the error
-                if (err) {
-                    res.send(err);
-                }
-
-                res.json(todos);
-            });
-        });
-
-        // create todo and send back all todos after creation
-        app.post('/api/todos', function(req, res) {
-                // create a todo
-                Todo.create({
-                    text: req.body.text,
-                    done: false
-                }, function(err, todo) {
-                    if (err) {
-                        res.send(err);
-                    }
-
-                    // get and return all the todos after you create another
-                    Todo.find(function(err, todos) {
-                        if(err) {
-                            res.send(err);
-                        }
-
-                        res.json(todos);
-                    });
-                }
-            );
-        });
-
-        // delete a todo
-        app.delete('/api/todos/:todo_id', function(req, res) {
-            Todo.remove({
-                _id : req.params.todo_id
-            }, function(err, todo) {
-                if (err)
-                    res.send(err);
-
-                // get and return all the todos after you create another
-                Todo.find(function(err, todos) {
-                    if (err)
-                        res.send(err)
-                    res.json(todos);
-                });
-            });
-        });
-
-    // app ----------------------
-    app.get("*", function(req, res) {
-        res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-    });
+// bring in the routes
+require('./app/routes')(app);
 
 app.listen(cloudFoundryConfig.appEnv.port, cloudFoundryConfig.appEnv.bind, function() {
     console.log("server starting on " + cloudFoundryConfig.appEnv.url + " !");

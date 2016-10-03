@@ -1,5 +1,6 @@
 // config/database.js
 
-module.exports = {
-    url : 'mongodb://{{mongoCredentials.username}}:{{mongoCredentials.password}}@{{mongoCredentials.url}}'
+module.exports = function(username, password, url) {
+    var urlCredentialed = 'mongodb://' + username + ':' + password + '@' + url;
+    return urlCredentialed;
 };
