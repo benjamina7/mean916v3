@@ -1,0 +1,17 @@
+{
+  "name": "mean916v3",
+  "description": "",
+  "main": "gulpfile.js",
+  "authors": [
+    "benjamina7 <techben@live.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/benjamina7/mean916v3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
