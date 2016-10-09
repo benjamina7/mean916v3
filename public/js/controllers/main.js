@@ -37,18 +37,18 @@ angular.module('todoController', [])
                     });
 
             }
-        }
+        };
 
         // DELETE ===============================
         // delete a todo after checking it
         $scope.deleteTodo = function(id) { 
             console.log('deleteTodo()');
-            if (id == undefined)
+            if (id === undefined)
                 return;
 
             Todos.delete(id)
                 .success(function(data) {
                     $scope.todos = data;
                 });
-        }
+        };
     });

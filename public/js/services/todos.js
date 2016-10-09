@@ -15,5 +15,5 @@ angular.module('todoService', [])
             delete : function(id) {
                 return $http.delete('/api/todos/' + id);
             }
-        }
+        };
     });
