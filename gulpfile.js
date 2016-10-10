@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
+    Server = require('karma').Server,
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
@@ -14,6 +15,15 @@ gulp.task('dev', function() {
     .pipe(jshint.reporter('default'))
     .pipe(jshint.reporter('fail'));
 });
+
+// NOTE:: Until I get gulp task working, can run tests manually with:    >    karma start
+// gulp.task('dev-run-tests', ['dev'], function(done) {     
+//     console.log('gulp task: dev-run-tests!');
+//     new Server({
+//         configFile: __dirname + '/karma.conf.js',
+//         singleRun: true
+//     }, done).start();
+// });
 
 gulp.task('concatJs', function() {
     console.log('gulp task: concatJs!');
